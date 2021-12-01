@@ -1,13 +1,17 @@
 #index - numerical index denoting matched set membership
 #q - vector q formed based upon observed responses to form test statistic t = Z'q
 #Z - treatment indicator
+#calculatePvalue - if true, calculates the true worst-case p-value, rather than just telling you whether or not the test rejects
+#continuousRelax - if true, does not solve the integer program described in Fogarty et al 2017, Appendix F; rather, solves a continuous relaxation
+#changepointGamma - if true, find largest Gamma for which sensitivity analysis rejects
 
-sensitivitySimple = function(index, q, Z, alpha = 0.05, alternative = "two.sided", Gamma=1, calculatePvalue = T, continuousRelax = F, maximizeGamma = T)
+sensitivitySimple = function(index, q, Z, alpha = 0.05, alternative = "two.sided", Gamma=1, calculatePvalue = T, continuousRelax = F, changepointGamma = T)
 {
 	gur = suppressWarnings(require(gurobi))
 	require(Matrix)
 	Z = 1*Z
 	ns = table(index)
+	maximizeGamma = changepointGamma
 	ms = table(index[Z==1])
 	if(any(ms!=1 & ns-ms!=1))
 	{
